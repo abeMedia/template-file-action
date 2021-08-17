@@ -10,13 +10,17 @@ async function run(): Promise<void> {
 
     const engine = new Liquid()
     const tpl = engine.parse(inputs.template)
-    const result: string = (await engine.render(tpl, inputs.data)).trim()
+    let result: string = await engine.render(tpl, inputs.data)
 
-    const output = existsSync(inputs.target)
-      ? inject(readFileSync(inputs.target, 'utf8'), result)
-      : result
+    // remove leading & trailing line-breaks
+    result = result.replace(/^\n*|\n*$/g, '')
 
-    writeFileSync(inputs.target, output)
+    // if target exists inject content between delimiters
+    if (existsSync(inputs.target)) {
+      result = inject(readFileSync(inputs.target, 'utf8'), result)
+    }
+
+    writeFileSync(inputs.target, result)
   } catch (error) {
     core.setFailed(error.message)
   }
