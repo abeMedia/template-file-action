@@ -8,10 +8,18 @@ require('./sourcemap-register.js');/******/ (() => { // webpackBootstrap
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.inject = exports.reDelimiter = void 0;
-exports.reDelimiter = new RegExp('(?<=<!-- START_TEMPLATE -->)[\\s\\S]*(?=<!-- END_TEMPLATE -->)|' +
-    '(?<=\\/\\* START_TEMPLATE \\*\\/)[\\s\\S]*(?=\\/\\* END_TEMPLATE \\*\\/)|' +
-    '(?<=\\/\\/ START_TEMPLATE)[\\s\\S]*(?=\\/\\/ END_TEMPLATE)|' +
-    '(?<=# START_TEMPLATE)[\\s\\S]*(?=# END_TEMPLATE)');
+const comments = [
+    (s) => `<!-- ${s} -->`,
+    (s) => `\\/\\* ${s} \\*\\/`,
+    (s) => `\\/\\/ ${s}`,
+    (s) => `# ${s}`,
+];
+function regex(comment) {
+    const start = comment('START_TEMPLATE');
+    const end = comment('END_TEMPLATE');
+    return `(?<=${start})[\\s\\S]*?(?=(^[^\\S\\r\\n]*)?${end})`;
+}
+exports.reDelimiter = new RegExp(comments.map(regex).join('|'), 'm');
 function inject(content, text) {
     if (exports.reDelimiter.test(content)) {
         return content.replace(exports.reDelimiter, `\n${text}\n`);
