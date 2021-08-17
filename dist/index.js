@@ -112,11 +112,14 @@ function run() {
             const inputs = input_1.getInputs();
             const engine = new liquidjs_1.Liquid();
             const tpl = engine.parse(inputs.template);
-            const result = (yield engine.render(tpl, inputs.data)).trim();
-            const output = fs_1.existsSync(inputs.target)
-                ? inject_1.inject(fs_1.readFileSync(inputs.target, 'utf8'), result)
-                : result;
-            fs_1.writeFileSync(inputs.target, output);
+            let result = yield engine.render(tpl, inputs.data);
+            // remove leading & trailing line-breaks
+            result = result.replace(/^\n*|\n*$/g, '');
+            // if target exists inject content between delimiters
+            if (fs_1.existsSync(inputs.target)) {
+                result = inject_1.inject(fs_1.readFileSync(inputs.target, 'utf8'), result);
+            }
+            fs_1.writeFileSync(inputs.target, result);
         }
         catch (error) {
             core.setFailed(error.message);
