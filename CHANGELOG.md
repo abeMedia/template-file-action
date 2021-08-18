@@ -1,5 +1,12 @@
 # Changelog
 
+### [1.0.2](https://www.github.com/theappnest/template-file-action/compare/v1.0.1...v1.0.2) (2021-08-18)
+
+
+### Bug Fixes
+
+* preserve indentation level of close delimiter ([#11](https://www.github.com/theappnest/template-file-action/issues/11)) ([f372960](https://www.github.com/theappnest/template-file-action/commit/f3729605ded80945cad56b597c72597ea1966c86))
+
 ### [1.0.1](https://www.github.com/theappnest/template-file-action/compare/v1.0.0...v1.0.1) (2021-08-17)
 
 
